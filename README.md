@@ -1,4 +1,4 @@
-# ssh workflow by isometry
+# ssh workflow for Alfred
 
 A workflow for [Alfred](http://www.alfredapp.com/) Powerpack users to rapidly open Secure SHell (ssh) sessions with smart hostname autocompletion based on the contents of `~/.ssh/known_hosts`, `~/.ssh/config`, `/etc/hosts` and (optionally) Bonjour.
 
@@ -6,13 +6,13 @@ A workflow for [Alfred](http://www.alfredapp.com/) Powerpack users to rapidly op
 
 ![Example 2](https://raw.github.com/isometry/alfredworkflows/master/screenshots/ssh_user@local.png)
 
-## Download
-- Alfred 2 workflow: [ssh.alfredworkflow](https://raw.github.com/isometry/alfredworkflows/master/ssh.alfredworkflow) (v1.3)
-- Alfred 3 workflow: [ssh.alfred3workflow](https://raw.github.com/isometry/alfredworkflows/master/ssh.alfred3workflow) (v2.0)
+## Releases
+- [v1.3 for Alfred 2.4+](https://github.com/isometry/alfred-ssh/releases/tag/v1.3)
+- [v2.x for Alfred 3.1+](https://github.com/isometry/alfred-ssh/releases/latest)
 
 ## Prerequisites
 
-- [Alfred](http://www.alfredapp.com/) (version 2.4+)
+- [Alfred](http://www.alfredapp.com/) (version 2.4+/3.1+)
 - The [Alfred Powerpack](http://www.alfredapp.com/powerpack/).
 - (optional) [pybonjour](https://pypi.python.org/pypi/pybonjour)
 
