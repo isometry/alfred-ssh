@@ -190,6 +190,6 @@ Notes:
 	<key>version</key>
 	<string>2.0</string>
 	<key>webaddress</key>
-	<string>https://github.com/isometry/alfredworkflows/tree/master/net.isometry.alfred.ssh</string>
+	<string>https://github.com/isometry/alfred-ssh</string>
 </dict>
 </plist>
