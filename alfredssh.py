@@ -6,6 +6,8 @@
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from collections import defaultdict
+
 import json
 import re
 import sys
@@ -18,21 +20,16 @@ DEFAULT_MAX_RESULTS=36
 class Hosts(object):
     def __init__(self, original, user=None):
         self.original = original
-        self.hosts = {original: ['input']}
+        self.hosts = defaultdict(list)
+        self.hosts[original].append('input')
         self.user = user
-
-    def add(self, host, source):
-        if host in self.hosts:
-            self.hosts[host].append(source)
-        else:
-            self.hosts[host] = [source]
 
     def update(self, _list):
         if not _list:
             return
         (hosts, source) = _list
         for host in hosts:
-            self.add(host, source)
+            self.hosts[host].append(source)
 
     def item(self, host, source):
         _arg = self.user and '@'.join([self.user, host]) or host
@@ -138,9 +135,7 @@ def parse_file(open_file, parser):
                 for host in line.split()
             )
     }
-    results = set()
-    results.update(parsers[parser])
-    return results
+    return set(parsers[parser])
 
 def fetch_bonjour(_service, alias='Bonjour', timeout=0.1):
     if int(os.getenv('alfredssh_bonjour', 1)) != 1:
