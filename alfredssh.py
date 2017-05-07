@@ -17,21 +17,21 @@ from time import time
 
 DEFAULT_MAX_RESULTS=36
 
-class Hosts(object):
+class Hosts(defaultdict):
     def __init__(self, original, user=None):
-        self.original = original
-        self.hosts = defaultdict(list)
-        self.hosts[original].append('input')
+        super(Hosts, self).__init__(list)
+        self[original].append('input')
+        self.query = original
         self.user = user
 
-    def update(self, _list):
+    def merge(self, _list):
         if not _list:
             return
         (hosts, source) = _list
         for host in hosts:
-            self.hosts[host].append(source)
+            self[host].append(source)
 
-    def item(self, host, source):
+    def _item(self, host, source):
         _arg = self.user and '@'.join([self.user, host]) or host
         _uri = 'ssh://{}'.format(_arg)
         _sub = 'source: {}'.format(', '.join(source))
@@ -45,12 +45,11 @@ class Hosts(object):
         }
 
     def json(self, _filter=(lambda x: True), maxresults=DEFAULT_MAX_RESULTS):
-        items = [self.item(host=self.original, source=self.hosts[self.original])]
-        for (host, source) in (
-            (x, y) for (x, y) in self.hosts.items()
-            if ((x != self.original) and _filter(x))
-        ):
-            items.append(self.item(host, source))
+        items = [self._item(host=self.query, source=self[self.query])]
+        items.extend((
+            self._item(host, self[host]) for host in self.keys()
+            if ((host != self.query) and _filter(host))
+        ))
         return json.dumps({"items": items[:maxresults]})
 
 def _create(path):
@@ -177,13 +176,13 @@ def complete():
         fetch_file('/etc/hosts', 'hosts', 'hosts', 'hosts'),
         fetch_bonjour('_ssh._tcp')
     ):
-        hosts.update(results)
+        hosts.merge(results)
 
     extra_files = os.getenv('alfredssh_extra_files')
     if extra_files:
         for file_spec in extra_files.split():
             (file_prefix, file_path) = file_spec.split('=', 1)
-            hosts.update(fetch_file(file_path, file_prefix, 'extra_file', None))
+            hosts.merge(fetch_file(file_path, file_prefix, 'extra_file', None))
 
     return hosts.json(pattern.search, maxresults=maxresults)
 
