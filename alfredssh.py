@@ -6,32 +6,25 @@
 from __future__ import unicode_literals
 from __future__ import print_function
 
+import json, re, sys, os
+
 from collections import defaultdict
-
-import json
-import re
-import sys
-import os
-
 from time import time
 
 DEFAULT_MAX_RESULTS=36
 
 class Hosts(defaultdict):
-    def __init__(self, original, user=None):
+    def __init__(self, query, user=None):
         super(Hosts, self).__init__(list)
-        self[original].append('input')
-        self.query = original
-        self.user = user
+        self[query].append('input')
+        self.query = query
+        self.user  = user
 
-    def merge(self, _list):
-        if not _list:
-            return
-        (hosts, source) = _list
+    def merge(self, source, hosts=()):
         for host in hosts:
             self[host].append(source)
 
-    def _item(self, host, source):
+    def _alfred_item(self, host, source):
         _arg = self.user and '@'.join([self.user, host]) or host
         _uri = 'ssh://{}'.format(_arg)
         _sub = 'source: {}'.format(', '.join(source))
@@ -44,31 +37,25 @@ class Hosts(defaultdict):
             "autocomplete": _arg
         }
 
-    def json(self, _filter=(lambda x: True), maxresults=DEFAULT_MAX_RESULTS):
-        items = [self._item(host=self.query, source=self[self.query])]
-        items.extend((
-            self._item(host, self[host]) for host in self.keys()
-            if ((host != self.query) and _filter(host))
-        ))
+    def alfred_json(self, _filter=(lambda x: True), maxresults=DEFAULT_MAX_RESULTS):
+        items = [
+            self._alfred_item(host, self[host]) for host in self.keys()
+            if _filter(host)
+        ]
         return json.dumps({"items": items[:maxresults]})
 
-def _create(path):
-    if not os.path.isdir(path):
-        os.mkdir(path)
-    if not os.access(path, os.W_OK):
-        raise IOError('No write access: %s' % path)
-    return path
-
-
-def work(volatile):
-    path = {
-        True: os.getenv('alfred_workflow_cache'),
-        False: os.getenv('alfred_workflow_data')
-    }[bool(volatile)]
-    if path is None:
-        path = os.getenv('TMPDIR')
-    return _create(os.path.expanduser(path))
-
+def cache_file(filename, volatile=True):
+    parent = os.path.expanduser(
+        (
+            os.getenv('alfred_workflow_data'),
+            os.getenv('alfred_workflow_cache')
+        )[bool(volatile)] or os.getenv('TMPDIR')
+    )
+    if not os.path.isdir(parent):
+        os.mkdir(parent)
+    if not os.access(parent, os.W_OK):
+        raise IOError('No write access: %s' % parent)
+    return os.path.join(parent, filename)
 
 def fetch_file(file_path, cache_prefix, parser, env_flag):
     """
@@ -76,21 +63,20 @@ def fetch_file(file_path, cache_prefix, parser, env_flag):
     """
     # Allow default sources to be disabled
     if env_flag is not None and int(os.getenv('alfredssh_{}'.format(env_flag), 1)) != 1:
-        return
+        return (file_path, ())
 
     # Expand the specified file path
     master = os.path.expanduser(file_path)
 
     # Skip a missing file
     if not os.path.isfile(master):
-        return
+        return (file_path, ())
 
     # Read from JSON cache if it's up-to-date
     if cache_prefix is not None:
-        cache = os.path.join(work(volatile=True),
-                          '{}.1.json'.format(cache_prefix))
+        cache = cache_file('{}.1.json'.format(cache_prefix))
         if os.path.isfile(cache) and os.path.getmtime(cache) > os.path.getmtime(master):
-            return (json.load(open(cache, 'r')), file_path)
+            return (file_path, json.load(open(cache, 'r')))
 
     # Open and parse the file
     try:
@@ -103,7 +89,7 @@ def fetch_file(file_path, cache_prefix, parser, env_flag):
         if cache_prefix is not None:
             json.dump(list(results), open(cache, 'w'))
         # Return results
-        return (results, file_path)
+        return (file_path, results)
 
 def parse_file(open_file, parser):
     parsers = {
@@ -136,12 +122,12 @@ def parse_file(open_file, parser):
     }
     return set(parsers[parser])
 
-def fetch_bonjour(_service, alias='Bonjour', timeout=0.1):
+def fetch_bonjour(_service='_ssh._tcp', alias='Bonjour', timeout=0.1):
     if int(os.getenv('alfredssh_bonjour', 1)) != 1:
-        return
-    cache = os.path.join(work(volatile=True), 'bonjour.1.json')
+        return (alias, ())
+    cache = cache_file('bonjour.1.json')
     if os.path.isfile(cache) and (time() - os.path.getmtime(cache) < 60):
-        return (json.load(open(cache, 'r')), alias)
+        return (alias, json.load(open(cache, 'r')))
     results = set()
     try:
         from pybonjour import DNSServiceBrowse, DNSServiceProcessResult
@@ -154,7 +140,7 @@ def fetch_bonjour(_service, alias='Bonjour', timeout=0.1):
     except ImportError:
         pass
     json.dump(list(results), open(cache, 'w'))
-    return (results, alias)
+    return (alias, results)
 
 def complete():
     query = sys.argv[1]
@@ -168,23 +154,23 @@ def complete():
     host_chars = (('\\.' if x is '.' else x) for x in list(host))
     pattern = re.compile('.*?\b?'.join(host_chars), flags=re.IGNORECASE)
 
-    hosts = Hosts(original=host, user=user)
+    hosts = Hosts(query=host, user=user)
 
     for results in (
         fetch_file('~/.ssh/config', 'ssh_config', 'ssh_config', 'ssh_config'),
         fetch_file('~/.ssh/known_hosts', 'known_hosts', 'known_hosts', 'known_hosts'),
         fetch_file('/etc/hosts', 'hosts', 'hosts', 'hosts'),
-        fetch_bonjour('_ssh._tcp')
+        fetch_bonjour()
     ):
-        hosts.merge(results)
+        hosts.merge(*results)
 
     extra_files = os.getenv('alfredssh_extra_files')
     if extra_files:
         for file_spec in extra_files.split():
             (file_prefix, file_path) = file_spec.split('=', 1)
-            hosts.merge(fetch_file(file_path, file_prefix, 'extra_file', None))
+            hosts.merge(*fetch_file(file_path, file_prefix, 'extra_file', None))
 
-    return hosts.json(pattern.search, maxresults=maxresults)
+    return hosts.alfred_json(pattern.search, maxresults=maxresults)
 
 if __name__ == '__main__':
     print(complete())
