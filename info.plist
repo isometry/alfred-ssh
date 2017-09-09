@@ -34,6 +34,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>8A4E0C7A-B3E2-4872-B51D-26A1CF571253</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>73503A72-F4BD-4C29-B531-ACE7CF405F6B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 	</dict>
 	<key>createdby</key>
 	<string>Robin Breathe</string>
@@ -45,6 +58,37 @@
 	<string>ssh</string>
 	<key>objects</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>41</integer>
+				<key>hotmod</key>
+				<integer>1835008</integer>
+				<key>hotstring</key>
+				<string>S</string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>89086C8B-52A6-4FC4-BD85-FC672CC36238</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -95,37 +139,6 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>action</key>
-				<integer>0</integer>
-				<key>argument</key>
-				<integer>0</integer>
-				<key>focusedappvariable</key>
-				<false/>
-				<key>focusedappvariablename</key>
-				<string></string>
-				<key>hotkey</key>
-				<integer>41</integer>
-				<key>hotmod</key>
-				<integer>1835008</integer>
-				<key>hotstring</key>
-				<string>S</string>
-				<key>leftcursor</key>
-				<false/>
-				<key>modsmode</key>
-				<integer>0</integer>
-				<key>relatedAppsMode</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.trigger.hotkey</string>
-			<key>uid</key>
-			<string>89086C8B-52A6-4FC4-BD85-FC672CC36238</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>browser</key>
 				<string></string>
 				<key>spaces</key>
@@ -139,6 +152,19 @@
 			<string>alfred.workflow.action.openurl</string>
 			<key>uid</key>
 			<string>027D62F5-14E9-4EA0-BE27-57C38B1ECC1F</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>triggerid</key>
+				<string>ssh</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>8A4E0C7A-B3E2-4872-B51D-26A1CF571253</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -179,6 +205,13 @@ Notes:
 			<key>ypos</key>
 			<integer>10</integer>
 		</dict>
+		<key>8A4E0C7A-B3E2-4872-B51D-26A1CF571253</key>
+		<dict>
+			<key>xpos</key>
+			<integer>150</integer>
+			<key>ypos</key>
+			<integer>200</integer>
+		</dict>
 	</dict>
 	<key>variables</key>
 	<dict>
@@ -196,7 +229,7 @@ Notes:
 		<string>1</string>
 	</dict>
 	<key>version</key>
-	<string>2.2</string>
+	<string>2.3</string>
 	<key>webaddress</key>
 	<string>https://github.com/isometry/alfred-ssh</string>
 </dict>
