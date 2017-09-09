@@ -1,7 +1,7 @@
 #!/usr/bin/env python2.7
 #-*- coding: utf-8 -*-
-# ssh.alfredworkflow, v2.0
-# Robin Breathe, 2013-2016
+# ssh.alfredworkflow, v2.2
+# Robin Breathe, 2013-2017
 
 from __future__ import unicode_literals
 from __future__ import print_function

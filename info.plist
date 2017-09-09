@@ -50,10 +50,14 @@
 			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
 				<key>argumenttype</key>
 				<integer>0</integer>
 				<key>escaping</key>
-				<integer>4</integer>
+				<integer>0</integer>
 				<key>keyword</key>
 				<string>ssh</string>
 				<key>queuedelaycustom</key>
@@ -67,17 +71,17 @@
 				<key>runningsubtext</key>
 				<string>Please Wait: matching host…</string>
 				<key>script</key>
-				<string>/usr/bin/python2.7 -m alfredssh "$@"</string>
+				<string></string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
-				<string></string>
+				<string>alfredssh.py</string>
 				<key>subtext</key>
 				<string>Open Secure SHell with smart hostname autocompletion</string>
 				<key>title</key>
 				<string>Open SSH</string>
 				<key>type</key>
-				<integer>0</integer>
+				<integer>8</integer>
 				<key>withspace</key>
 				<true/>
 			</dict>
@@ -95,6 +99,10 @@
 				<integer>0</integer>
 				<key>argument</key>
 				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
 				<key>hotkey</key>
 				<integer>41</integer>
 				<key>hotmod</key>
@@ -188,7 +196,7 @@ Notes:
 		<string>1</string>
 	</dict>
 	<key>version</key>
-	<string>2.1</string>
+	<string>2.2</string>
 	<key>webaddress</key>
 	<string>https://github.com/isometry/alfred-ssh</string>
 </dict>
