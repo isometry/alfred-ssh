@@ -10,13 +10,13 @@ import json, re, sys, os
 
 from collections import defaultdict
 from time import time
+from copy import copy
 
 DEFAULT_MAX_RESULTS=36
 
 class Hosts(defaultdict):
     def __init__(self, query, user=None):
         super(Hosts, self).__init__(list)
-        self[query].append('input')
         self.query = query
         self.user  = user
 
@@ -37,11 +37,34 @@ class Hosts(defaultdict):
             "autocomplete": _arg
         }
 
+    def levenshtein_score(self, item):
+        """ https://en.wikipedia.org/wiki/Levenshtein_distance#Iterative_with_two_matrix_rows """
+        s = self.query
+        len_s = len(s)
+        t = item['arg']
+        len_t = len(t)
+
+        if s == t: return 0
+        elif len_s == 0: return len_t
+        elif len_t == 0: return len_s
+        v0 = list(range(len_t + 1))
+        v1 = [None] * (len_t + 1)
+        for i in range(len_s):
+            v1[0] = i + 1
+            for j in range(len_t):
+                cost = 0 if s[i] == t[j] else 1
+                v1[j + 1] = min(v1[j] + 1, v0[j + 1] + 1, v0[j] + cost)
+            v0 = copy(v1)
+        return v0[len_t]
+
     def alfred_json(self, _filter=(lambda x: True), maxresults=DEFAULT_MAX_RESULTS):
         items = [
             self._alfred_item(host, self[host]) for host in self.keys()
             if _filter(host)
         ]
+        items.sort(key=self.levenshtein_score)
+        if self.query not in self:
+            items.insert(1, self._alfred_item(self.query, ['input']))
         return json.dumps({"items": items[:maxresults]})
 
 def cache_file(filename, volatile=True):
