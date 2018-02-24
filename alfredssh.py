@@ -143,7 +143,7 @@ def fetch_bonjour(_service='_ssh._tcp', alias='Bonjour', timeout=0.1):
     return (alias, results)
 
 def complete():
-    query = sys.argv[1]
+    query = ''.join(sys.argv[1:])
     maxresults = int(os.getenv('alfredssh_max_results', DEFAULT_MAX_RESULTS))
 
     if '@' in query:
