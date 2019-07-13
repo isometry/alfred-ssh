@@ -159,6 +159,8 @@ def complete():
     for results in (
         fetch_file('~/.ssh/config', 'ssh_config', 'ssh_config', 'ssh_config'),
         fetch_file('~/.ssh/known_hosts', 'known_hosts', 'known_hosts', 'known_hosts'),
+        fetch_file('/etc/ssh/ssh_known_hosts', 'systemwide_known_hosts', 'known_hosts', 'known_hosts'),
+        fetch_file('/usr/local/etc/ssh/ssh_known_hosts', 'localetc_known_hosts', 'known_hosts', 'known_hosts'),
         fetch_file('/etc/hosts', 'hosts', 'hosts', 'hosts'),
         fetch_bonjour()
     ):
