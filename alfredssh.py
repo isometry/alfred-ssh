@@ -109,7 +109,7 @@ def parse_file(open_file, parser):
         'hosts':
             (
                 host for line in open_file
-                if not line.startswith('#')
+                if not line.startswith('#') and not line.startswith("127.0.0.1")
                 for host in line.split()[1:]
                 if host != 'broadcasthost'
             ),
