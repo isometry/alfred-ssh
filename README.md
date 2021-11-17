@@ -9,19 +9,21 @@ A workflow for [Alfred](http://www.alfredapp.com/) Powerpack users to rapidly op
 ## Releases
 
 - [v1.3 for Alfred 2.4+](https://github.com/isometry/alfred-ssh/releases/tag/v1.3)
-- [v2.x for Alfred 3.1+](https://github.com/isometry/alfred-ssh/releases/latest)
+- [v2.3 for Alfred 3.1+](https://github.com/isometry/alfred-ssh/releases/tag/v2.3)
+- [v3.x for Alfred 4.0+](https://github.com/isometry/alfred-ssh/releases/latest)
 
 ## Prerequisites
 
-- [Alfred](http://www.alfredapp.com/) (version 2.4+/3.1+)
+- [Alfred](http://www.alfredapp.com/) (version 2.4+/3.1+/4.0+)
 - The [Alfred Powerpack](http://www.alfredapp.com/powerpack/).
+- Python3 for v3.x+ (most easily installed/maintained with `sudo xcode-select --install` or [Homebrew](https://brew.sh/))
 - (optional) [pybonjour](https://pypi.python.org/pypi/pybonjour)
 
 ## Usage
 
 Type `ssh` in Alfred followed by either a literal hostname or by some letters from the hostname of a host referenced in any of `~/.ssh/known_hosts`, `~/.ssh/config`, `/etc/hosts`, or (with `pybonjour` installed) Bonjour.
 
-Alfred 3 only: workflow configuration is available by setting/changing Workflow Environment Variables (accessed via the [𝓍] button within the workflow):
+Alfred 3+ only: workflow configuration is available by setting/changing Workflow Environment Variables (accessed via the [𝓍] button within the workflow):
 
 - disable unwanted sources by setting the associated Workflow Environment Variable to 0; e.g. `alfredssh_known_hosts`, `alfredssh_ssh_config`, `alfredssh_hosts`, `alfredssh_bonjour`.
 - change the maximum number of returned results by changing `alfredssh_max_results` (default=36).

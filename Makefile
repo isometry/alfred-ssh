@@ -1,2 +1,2 @@
 all:
-	zip -j9 --filesync ssh.alfred3workflow  *.{plist,png,py}
+	zip -j9 --filesync ssh.alfredworkflow  *.{plist,png,py}

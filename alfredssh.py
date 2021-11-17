@@ -1,24 +1,25 @@
-#!/usr/bin/env python2.7
-#-*- coding: utf-8 -*-
-# ssh.alfredworkflow, v2.2
-# Robin Breathe, 2013-2017
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# ssh.alfredworkflow, v3.0
+# Robin Breathe, 2013-2021
 
-from __future__ import unicode_literals
-from __future__ import print_function
-
-import json, re, sys, os
+import json
+import re
+import sys
+import os
 
 from collections import defaultdict
 from time import time
 
-DEFAULT_MAX_RESULTS=36
+DEFAULT_MAX_RESULTS = 36
+
 
 class Hosts(defaultdict):
     def __init__(self, query, user=None):
         super(Hosts, self).__init__(list)
         self[query].append('input')
         self.query = query
-        self.user  = user
+        self.user = user
 
     def merge(self, source, hosts=()):
         for host in hosts:
@@ -33,7 +34,7 @@ class Hosts(defaultdict):
             "title": _uri,
             "subtitle": _sub,
             "arg": _arg,
-            "icon": { "path": "icon.png" },
+            "icon": {"path": "icon.png"},
             "autocomplete": _arg
         }
 
@@ -43,6 +44,7 @@ class Hosts(defaultdict):
             if _filter(host)
         ]
         return json.dumps({"items": items[:maxresults]})
+
 
 def cache_file(filename, volatile=True):
     parent = os.path.expanduser(
@@ -56,6 +58,7 @@ def cache_file(filename, volatile=True):
     if not os.access(parent, os.W_OK):
         raise IOError('No write access: %s' % parent)
     return os.path.join(parent, filename)
+
 
 def fetch_file(file_path, cache_prefix, parser, env_flag):
     """
@@ -91,6 +94,7 @@ def fetch_file(file_path, cache_prefix, parser, env_flag):
         # Return results
         return (file_path, results)
 
+
 def parse_file(open_file, parser):
     parsers = {
         'ssh_config':
@@ -122,6 +126,7 @@ def parse_file(open_file, parser):
     }
     return set(parsers[parser])
 
+
 def fetch_bonjour(_service='_ssh._tcp', alias='Bonjour', timeout=0.1):
     if int(os.getenv('alfredssh_bonjour', 1)) != 1:
         return (alias, ())
@@ -132,7 +137,7 @@ def fetch_bonjour(_service='_ssh._tcp', alias='Bonjour', timeout=0.1):
     try:
         from pybonjour import DNSServiceBrowse, DNSServiceProcessResult
         from select import select
-        bj_callback = lambda s, f, i, e, n, t, d: results.add('{}.{}'.format(n.lower(), d[:-1]))
+        def bj_callback(s, f, i, e, n, t, d): return results.add('{}.{}'.format(n.lower(), d[:-1]))
         bj_browser = DNSServiceBrowse(regtype=_service, callBack=bj_callback)
         select([bj_browser], [], [], timeout)
         DNSServiceProcessResult(bj_browser)
@@ -141,6 +146,7 @@ def fetch_bonjour(_service='_ssh._tcp', alias='Bonjour', timeout=0.1):
         pass
     json.dump(list(results), open(cache, 'w'))
     return (alias, results)
+
 
 def complete():
     query = ''.join(sys.argv[1:])
@@ -173,6 +179,7 @@ def complete():
             hosts.merge(*fetch_file(file_path, file_prefix, 'extra_file', None))
 
     return hosts.alfred_json(pattern.search, maxresults=maxresults)
+
 
 if __name__ == '__main__':
     print(complete())
