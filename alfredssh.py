@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# ssh.alfredworkflow, v3.0
-# Robin Breathe, 2013-2021
+# ssh.alfredworkflow, v3.1
+# Robin Breathe, 2013-2022
 
 import json
 import re
@@ -157,7 +157,7 @@ def complete():
     else:
         (user, host) = (None, query)
 
-    host_chars = (('\\.' if x is '.' else x) for x in list(host))
+    host_chars = (('\\.' if x == '.' else x) for x in list(host))
     pattern = re.compile('.*?\b?'.join(host_chars), flags=re.IGNORECASE)
 
     hosts = Hosts(query=host, user=user)
