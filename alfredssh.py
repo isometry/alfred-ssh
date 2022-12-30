@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# ssh.alfredworkflow, v3.1
-# Robin Breathe, 2013-2022
+# ssh.alfredworkflow, v4.0
+# Robin Breathe, 2013-2023
 
 import json
 import re
@@ -151,8 +151,8 @@ def complete():
 
     extra_files = os.getenv('alfredssh_extra_files')
     if extra_files:
-        for file_spec in extra_files.split():
-            (file_prefix, file_path) = file_spec.split('=', 1)
+        for file_path in extra_files.split():
+            file_prefix = os.path.basename(file_path)
             hosts.merge(*fetch_file(file_path, file_prefix, 'extra_file', None))
 
     return hosts.alfred_json(pattern.search, maxresults=maxresults)

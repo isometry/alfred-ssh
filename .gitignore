@@ -2,4 +2,5 @@
 ._*
 *.py[cod]
 *~
+prefs.plist
 ssh.alfred*workflow
