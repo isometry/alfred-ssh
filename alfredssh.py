@@ -9,7 +9,6 @@ import sys
 import os
 
 from collections import defaultdict
-from time import time
 
 DEFAULT_MAX_RESULTS = 36
 
@@ -127,27 +126,6 @@ def parse_file(open_file, parser):
     return set(parsers[parser])
 
 
-def fetch_bonjour(_service='_ssh._tcp', alias='Bonjour', timeout=0.1):
-    if int(os.getenv('alfredssh_bonjour', 1)) != 1:
-        return (alias, ())
-    cache = cache_file('bonjour.1.json')
-    if os.path.isfile(cache) and (time() - os.path.getmtime(cache) < 60):
-        return (alias, json.load(open(cache, 'r')))
-    results = set()
-    try:
-        from pybonjour import DNSServiceBrowse, DNSServiceProcessResult
-        from select import select
-        def bj_callback(s, f, i, e, n, t, d): return results.add('{}.{}'.format(n.lower(), d[:-1]))
-        bj_browser = DNSServiceBrowse(regtype=_service, callBack=bj_callback)
-        select([bj_browser], [], [], timeout)
-        DNSServiceProcessResult(bj_browser)
-        bj_browser.close()
-    except ImportError:
-        pass
-    json.dump(list(results), open(cache, 'w'))
-    return (alias, results)
-
-
 def complete():
     query = ''.join(sys.argv[1:])
     maxresults = int(os.getenv('alfredssh_max_results', DEFAULT_MAX_RESULTS))
@@ -168,7 +146,6 @@ def complete():
         fetch_file('/etc/ssh/ssh_known_hosts', 'systemwide_known_hosts', 'known_hosts', 'known_hosts'),
         fetch_file('/usr/local/etc/ssh/ssh_known_hosts', 'localetc_known_hosts', 'known_hosts', 'known_hosts'),
         fetch_file('/etc/hosts', 'hosts', 'hosts', 'hosts'),
-        fetch_bonjour()
     ):
         hosts.merge(*results)
 
