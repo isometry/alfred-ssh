@@ -1,0 +1,19 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - v*.*
+
+jobs:
+  release:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: create-alfredworkflow
+        run: make
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "*.alfredworkflow"
+          draft: true
+          generateReleaseNotes: true
